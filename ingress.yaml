@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    konghq.com/strip-path: "true"
+    kubernetes.io/ingress.class: kong
+    konghq.com/plugins: twelve-per-min
+spec:
+  ingressClassName: kong
+  rules:
+  - http:
+      paths:
+      - path: /customers
+        pathType: Prefix
+        backend:
+          service:
+            name: customer
+            port:
+              number: 80
+      - path: /inventory
+        pathType: Prefix
+        backend:
+          service:
+            name: inventory
+            port:
+              number: 80
+      - path: /products
+        pathType: Prefix
+        backend:
+          service:
+            name: product
+            port:
+              number: 80
+      - path: /cartservice
+        pathType: Prefix
+        backend:
+          service:
+            name: cartservice
+            port:
+              number: 80
+      - path: /orderservice
+        pathType: Prefix
+        backend:
+          service:
+            name: orderservice
+            port:
+              number: 80
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: twelve-per-min
+config:
+  minute: 12
+  policy: local
+plugin: rate-limiting
